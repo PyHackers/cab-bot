@@ -11,12 +11,12 @@ def index():
 ''' Cab Service Login '''
 @app.route('/login')
 def login():
-	usr = request.args.get('usr')
-	pwd = request.args.get('pwd')
+	usr = request.args.get('username')
+	pwd = request.args.get('password')
 	if not usr:
-		return jsonify(results={"success":False,"msg":"please send usr"})
+		return jsonify(results={"success":False,"msg":"please send username"})
 	if not pwd:
-		return jsonify(results={"success":False,"msg":"please send pwd"})
+		return jsonify(results={"success":False,"msg":"please send password"})
 	user = firebase.pull_from_firebase('users', usr)
 	print user
 	if not user:
@@ -24,18 +24,18 @@ def login():
 	else:
 		password = firebase.pull_from_firebase('users/'+usr+'/', 'pwd')
 	if password == pwd:
-		return jsonify(results={"success":True,"msg":"Succesfully connected with OLA Account!"})
+		return jsonify(results={"success":True, "user_id": usr, "username": usr,"msg":"Succesfully connected with OLA Account!"})
 	else:
 		return jsonify(results={"success":False,"msg":"Incorrect pwd!!"})
 
 @app.route('/signup')
 def signup():
-	usr = request.args.get('usr')
-	pwd = request.args.get('pwd')
+	usr = request.args.get('username')
+	pwd = request.args.get('password')
 	if not usr:
-		return jsonify(results={"success":False,"msg":"please send usr"})
+		return jsonify(results={"success":False,"msg":"please send username"})
 	if not pwd:
-		return jsonify(results={"success":False,"msg":"please send pwd"})
+		return jsonify(results={"success":False,"msg":"please send password"})
 	firebase.push_to_firebase('users', usr, '{"pwd":"'+pwd+'"}')
 	return jsonify(results={"success":True,"msg":"Succesfully signed up!"})
 
