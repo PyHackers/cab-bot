@@ -62,18 +62,38 @@ def bookcab():
 @app.route('/parse')
 def parse():
 	msg = request.args.get('msg')
+	user_id = request.args.get('user_id')
+	receiver_id = request.args.get('receiver_id')
+	slack = request.args.get('slack')
+	mylat = request.args.get('lat')
+	mylong = request.args.get('long')
 	# mytype = request.args.get('type')
 
 	if not msg:
 		return jsonify(results={"success": False,"msg": "please send msg"})
+	if not user_id:
+		return jsonify(results={"success": False,"msg": "please send user_id"})
+	if not receiver_id:
+		return jsonify(results={"success": False,"msg": "please send receiver_id"})
+	if not slack:
+		return jsonify(results={"success": False,"msg": "please send slack time"})
+	if not mylat:
+		return jsonify(results={"success": False,"msg": "please send latitude"})
+	if not mylong:
+		return jsonify(results={"success": False,"msg": "please send longitude"})
+
+
 	# if not mytype:
 		# return jsonify(results={"success": False,"msg": "please send type: movie or flight"})
 	#msg = "Hi Customer, Booking ID: AGSN0004863077. Seats: DIAMOND-B10,B11,B12,B13 for Interstellar on Sat, 22 Nov, 2014 10:30pm at AGS Cinemas OMR: Navlur (SCREEN 4). Please carry your CC/DC card which was used for booking tickets"
 	# details = parser.parse(msg, mytype)
-	details = parser.parse(msg)
+	details = {}
+	parse_details = parser.parse(msg)
+
 	# @TODO : Call other apis
-	jsonObject = json.loads(details)
-	print "jsonObject", jsonObject
+	# jsonObject = json.loads(details)
+	# print "jsonObject", jsonObject
+
 	return jsonify(results={"success": True,"msg": details})
 
 if __name__ == '__main__':

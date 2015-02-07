@@ -40,6 +40,7 @@ def chat():
 	push_chat_msg(author, msg)
 	return 'posted to firebase'
 
+#check
 @app.route('/departure_time')
 def departure_time():
 	src = request.args.get('src')
@@ -109,7 +110,7 @@ def get_distance_matrix(src, dest, atime):
 	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
 	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/distancematrix/json?key='+key+'&origins='+src+'&destinations='+dest+'&arrival_time='+atime)
 	return response.read()
-
+#check
 def get_geocode(addr):
 	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
 	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/geocode/json?key='+key+'&address='+addr)

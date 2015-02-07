@@ -91,14 +91,17 @@ def parseMovie(msg):
 	
 
 def parseMovies(msg):
-	details = parseMovie(msg)
+	d = parseMovie(msg)
+	t = {"type": "movie"}
+	details = dict(d.items() + t.items())
 	return details
 
 def parseFlight(msg):
 	loc = getLocation(msg) #to, from
 	date = getDateTime(msg) #date, time
 	fid = getFlightId(msg) #fid
-	details = dict(loc.items() + date.items() + fid.items())
+	t = {"type": "flight"}
+	details = dict(loc.items() + date.items() + fid.items() + t.items())
 	return details
 
 def test(msg):
