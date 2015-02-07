@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 import math, json, os
 import firebase as firebase
+import unicodedata
 app = Flask(__name__, static_folder='client', static_url_path='')
 
 @app.route('/')
@@ -38,6 +39,24 @@ def signup():
 		return jsonify(results={"success":False,"msg":"please send password"})
 	firebase.push_to_firebase('users', usr, '{"pwd":"'+pwd+'"}')
 	return jsonify(results={"success":True,"msg":"Succesfully signed up!"})
+
+@app.route('/bookcab')
+def bookcab():
+	user_id = request.args.get('user_id')
+	cabtype = request.args.get('type')
+	jsonString = request.args.get('JSON')
+	jsonObject = json.loads(jsonString)
+
+	if not user_id:
+		return jsonify(results={"success":False,"msg":"please send user_id"})
+	if not cabtype:
+		return jsonify(results={"success":False,"msg":"please send type"})
+	if not jsonString:
+		return jsonify(results={"success":False,"msg":"please send JSON"})
+
+	msg = "Cabs successfully booked for " + ("the movie" if int(cabtype) == 1 else "the flight") + "!!"    
+
+	return jsonify(results={"success":True,"msg":msg})
 
 if __name__ == '__main__':
 	port = int(os.environ.get("PORT", 5000))
