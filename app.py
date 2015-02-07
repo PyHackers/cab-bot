@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from datetime import datetime
 import math, json, os
+import firebase as firebase
 app = Flask(__name__, static_folder='client', static_url_path='')
 
 @app.route('/')
@@ -8,28 +9,35 @@ def index():
     return app.send_static_file('index.html')
 
 ''' Cab Service Login '''
-@app.route('/login', methods=["POST"])
+@app.route('/login')
 def login():
-	response = {}
-	
-	email = request.args.get('email')
-	password = request.args.get('password')
-	isAuth = authenticate(email, password)
-
-	if isAuth:
-		response["success"] = True
-		response["user_id"] = isAuth
+	usr = request.args.get('usr')
+	pwd = request.args.get('pwd')
+	if not usr:
+		return jsonify(results={"success":False,"msg":"please send usr"})
+	if not pwd:
+		return jsonify(results={"success":False,"msg":"please send pwd"})
+	user = firebase.pull_from_firebase('users', usr)
+	print user
+	if not user:
+		return jsonify(results={"success":False,"msg":"usr does not exist!!"})
 	else:
-		response["success"] = False
+		password = firebase.pull_from_firebase('users/'+usr+'/', 'pwd')
+	if password == pwd:
+		return jsonify(results={"success":True,"msg":"Succesfully connected with OLA Account!"})
+	else:
+		return jsonify(results={"success":False,"msg":"Incorrect pwd!!"})
 
-	return json.dumps(response)
-
-def authenticate(email, password):
-	user_id = "test"
-
-	if email is not None and password is not None and email == "admin" and password == "admin":
-		return user_id
-	return
+@app.route('/signup')
+def signup():
+	usr = request.args.get('usr')
+	pwd = request.args.get('pwd')
+	if not usr:
+		return jsonify(results={"success":False,"msg":"please send usr"})
+	if not pwd:
+		return jsonify(results={"success":False,"msg":"please send pwd"})
+	firebase.push_to_firebase('users', usr, '{"pwd":"'+pwd+'"}')
+	return jsonify(results={"success":True,"msg":"Succesfully signed up!"})
 
 if __name__ == '__main__':
 	port = int(os.environ.get("PORT", 5000))
