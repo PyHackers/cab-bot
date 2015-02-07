@@ -3,3 +3,4 @@ pymongo==2.7.1
 json
 datetime
 gunicorn==19.0.0
+python-dateutil

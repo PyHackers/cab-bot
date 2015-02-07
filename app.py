@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 from server import parser
+from time import mktime
+import olatrip
 import math, json, os
 import firebase as firebase
 import unicodedata
@@ -71,10 +73,10 @@ def parse():
 
 	if not msg:
 		return jsonify(results={"success": False,"msg": "please send msg"})
-	if not user_id:
-		return jsonify(results={"success": False,"msg": "please send user_id"})
-	if not receiver_id:
-		return jsonify(results={"success": False,"msg": "please send receiver_id"})
+	# if not user_id:
+	# 	return jsonify(results={"success": False,"msg": "please send user_id"})
+	# if not receiver_id:
+	# 	return jsonify(results={"success": False,"msg": "please send receiver_id"})
 	if not slack:
 		return jsonify(results={"success": False,"msg": "please send slack time"})
 	if not mylat:
@@ -87,14 +89,61 @@ def parse():
 		# return jsonify(results={"success": False,"msg": "please send type: movie or flight"})
 	#msg = "Hi Customer, Booking ID: AGSN0004863077. Seats: DIAMOND-B10,B11,B12,B13 for Interstellar on Sat, 22 Nov, 2014 10:30pm at AGS Cinemas OMR: Navlur (SCREEN 4). Please carry your CC/DC card which was used for booking tickets"
 	# details = parser.parse(msg, mytype)
+	response = []
 	details = {}
 	parse_details = parser.parse(msg)
+	
+	#get geocordinates
+	geocode = postParse(parse_details)
+	
+	#get departure time
+	mydate = parse_details.get("date")
+	mytime = parse_details.get("time")
+	mydatetime = datetime.combine(mydate, mytime)
 
-	# @TODO : Call other apis
-	# jsonObject = json.loads(details)
-	# print "jsonObject", jsonObject
+	destination_tsp = mydatetime.strftime('%s')
+	print destination_tsp
+	a = mylat + "," + mylong
+	b = str(geocode.get("lat")) + "," + str(geocode.get("long"))
 
-	return jsonify(results={"success": True,"msg": details})
+	total_time = olatrip.departure_time(a, b, destination_tsp, slack)
+	total_time = total_time
+
+	effective_time = datetime.utcfromtimestamp(float(total_time))
+
+	mytype = parse_details.get("type").lower()
+
+	details["time"] = effective_time.time().strftime("%H:%M")
+	details["date"] = effective_time.date().strftime("%Y-%m-%d")
+	details["pickup_point"] = str(olatrip.get_reverse_geocode(mylat, mylong))
+	details["lat"] = str(mylat)
+	details["long"] = str(mylong)
+	details["title"] = (parse_details.get("name") if mytype == "movie" else parse_details.get("from") )
+	details["type"] = mytype
+	details["event_time"] = mytime.strftime("%H:%M")
+
+	#RETURN CAB
+	details2 = {}
+
+	# details2["time"] = 
+
+	response.append(details)
+	response.append(details2)
+	print response
+	return jsonify(results={"success": True,"msg": response})
+
+def postParse(details):
+	mytype = details.get("type")
+	#get address
+	address = ""
+	if mytype == 'flight':
+		address = details.get("to") + "+Airport" #Append with + to avoid bad request
+	elif mytype == 'movie':
+		address = details.get("location")
+	#get cordinates
+	geo = olatrip.get_geocode(address)
+
+	return geo
 
 if __name__ == '__main__':
 	port = int(os.environ.get("PORT", 5000))

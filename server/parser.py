@@ -48,6 +48,14 @@ def getTime(upto):
 
 MOVIE_PATTERN = 'for\s(.*)\son\s(.*)\sat\s(.*)\('
 MOVIE2_PATTERN = '\|(.*)\|'
+
+def validateMovieName(name):
+	m = re.match('\s*([a-zA-Z0-9 ]+)\s*', name)
+	if m:
+		return m.group(1).strip()
+	else:
+		return name
+
 def parseMovie(msg):
 	response = {}
 
@@ -77,7 +85,7 @@ def parseMovie(msg):
 					if o_id == 'location':
 						details["location"] = group[1]
 					elif o_id == 'movie':
-						details["name"] = group[1] #@TODO Check appended (U/A)
+						details["name"] = validateMovieName(group[1]) #@TODO Check appended (U/A)
 					elif o_id == 'show details':
 						details["date"] = dparser.parse(group[1], fuzzy=True).date()
 				else:

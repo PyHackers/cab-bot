@@ -41,20 +41,23 @@ def chat():
 	return 'posted to firebase'
 
 #check
-@app.route('/departure_time')
-def departure_time():
-	src = request.args.get('src')
-	dest = request.args.get('dest')
-	atime = request.args.get('atime')
+def departure_time(src, dest, tsp, slack):
+	# src = request.args.get('src')
+	# dest = request.args.get('dest')
+	# atime = request.args.get('atime')
 	if not src:
 		src = '12.9780223,77.5723842'
 	if not dest:
 		dest = '12.9501866,77.6449368'
-	if not atime:
-		atime = '1423561080'
-	dmatrix = json.loads(get_distance_matrix(src, dest, atime))
+	if not tsp:
+		tsp = '1423561080'
+	dmatrix = json.loads(get_distance_matrix(src, dest, tsp))
+	print dmatrix
 	ttime = dmatrix['rows'][0]['elements'][0]['duration']['value']
-	return str(int(atime)-ttime)
+	ttsr = int(tsp)-ttime
+	ttsr = ttsr + 19800 #GMT + 5:30
+	ttsr = ttsr - int(slack) #
+	return str(ttsr)
 
 # @app.route('/flights', methods=['POST', 'GET'])
 # def login():
@@ -69,6 +72,13 @@ def departure_time():
 # 			return 'Please send GET request'
 # 	else:
 # 		return 'Please send the request parameters (src, dest, ddate, rdate)' 
+
+
+def getMovieDuration(name):
+	movie_details = get_movie_details_from_imdb(movie)
+	
+	return movie_details
+
 
 def get_flights(src, dest, ddate, rdate):
 	#http://api.cleartrip.com/air/1.0/search?from=BOM&to=DEL&depart-date=2015-02-15&return-date=2015-02-20&adults=1&country=IN&currency=INR
@@ -108,14 +118,26 @@ def push_chat_msg(author, msg):
 def get_distance_matrix(src, dest, atime):
 	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
 	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
-	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/distancematrix/json?key='+key+'&origins='+src+'&destinations='+dest+'&arrival_time='+atime)
+	url = 'https://maps.googleapis.com/maps/api/distancematrix/json?key='+key+'&origins='+src+'&destinations='+dest+'&arrival_time='+atime
+	print url
+	response = urllib2.urlopen(url)
+	print response
 	return response.read()
 #check
 def get_geocode(addr):
 	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
-	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/geocode/json?key='+key+'&address='+addr)
+	url = 'https://maps.googleapis.com/maps/api/geocode/json?key=' + key + '&address=' + addr
+	url = url.replace(' ', '+')
+	response = urllib2.urlopen(url)
 	latlong = json.loads(response.read())['results'][0]['geometry']['location']
-	return latlong['lat'], latlong['lng']
+	return {"lat": latlong['lat'], "long": latlong['lng']}
+
+def get_reverse_geocode(lat, lng):
+	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
+	url = 'https://maps.googleapis.com/maps/api/geocode/json?key=' + key + '&latlng=' + str(lat) + ',' + str(lng) 
+	response = urllib2.urlopen(url)
+	address = json.loads(response.read())['results'][0]['address_components'][0]['long_name']
+	return address
 
 def push_to_firebase(path, key, json):
 	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
