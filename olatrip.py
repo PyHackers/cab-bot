@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 import requests
 import urllib2
+import json
 app = Flask(__name__)
 
 @app.route('/')
@@ -37,6 +38,21 @@ def chat():
 		author = 'Rajdeep'
 	push_chat_msg(author, msg)
 	return 'posted to firebase'
+
+@app.route('/departure_time')
+def departure_time():
+	src = request.args.get('src')
+	dest = request.args.get('dest')
+	atime = request.args.get('atime')
+	if not src:
+		src = '12.9780223,77.5723842'
+	if not dest:
+		dest = '12.9501866,77.6449368'
+	if not atime:
+		atime = '1423561080'
+	dmatrix = json.loads(get_distance_matrix(src, dest, atime))
+	ttime = dmatrix['rows'][0]['elements'][0]['duration']['value']
+	return str(int(atime)-ttime)
 
 # @app.route('/flights', methods=['POST', 'GET'])
 # def login():
@@ -77,6 +93,27 @@ def push_chat_msg(author, msg):
 	request = urllib2.Request('https://blistering-inferno-8126.firebaseio.com/chat/KEY.json', data='{"author":"'+author+'", "message":"'+msg+'"}')
 	request.get_method = lambda: 'PUT'
 	url = opener.open(request)
+
+def push_chat_msg(author, msg):
+	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
+	opener = urllib2.build_opener(urllib2.HTTPHandler)
+	request = urllib2.Request('https://blistering-inferno-8126.firebaseio.com/chat/KEY.json', data='{"author":"'+author+'", "message":"'+msg+'"}')
+	request.get_method = lambda: 'PUT'
+	url = opener.open(request)
+
+#src: "42.112,48.123"
+#arrivaltime: timestamp
+def get_distance_matrix(src, dest, atime):
+	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
+	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
+	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/distancematrix/json?key='+key+'&origins='+src+'&destinations='+dest+'&arrival_time='+atime)
+	return response.read()
+
+def get_geocode(addr):
+	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
+	response = urllib2.urlopen('https://maps.googleapis.com/maps/api/geocode/json?key='+key+'&address='+addr)
+	latlong = json.loads(response.read())['results'][0]['geometry']['location']
+	return latlong['lat'], latlong['lng']
 
 if __name__ == '__main__':
     app.run(debug=True)
