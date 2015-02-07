@@ -5,7 +5,6 @@ from time import mktime
 import olatrip
 import math, json, os
 import firebase as firebase
-import unicodedata
 app = Flask(__name__, static_folder='client', static_url_path='')
 
 @app.route('/')
@@ -43,6 +42,12 @@ def signup():
 	firebase.push_to_firebase('users', usr, '{"pwd":"'+pwd+'"}')
 	return jsonify(results={"success":True,"msg":"Succesfully signed up!"})
 
+@app.route('/offlineSMS')
+def offlineSMS():
+	sms = request.args.get('sms')
+	firebase.push_to_firebase('sms', None, '{"msg":"'+sms+'"}')
+	return "smsPosted"
+
 @app.route('/bookcab')
 def bookcab():
 	user_id = request.args.get('user_id')
@@ -56,6 +61,8 @@ def bookcab():
 		return jsonify(results={"success":False,"msg":"please send type"})
 	if not jsonString:
 		return jsonify(results={"success":False,"msg":"please send JSON"})
+
+	time.sleep( 2 )
 
 	msg = "Cabs successfully booked for " + ("the movie" if int(cabtype) == 1 else "the flight") + "!!"    
 
@@ -93,6 +100,8 @@ def parse():
 	details = {}
 	parse_details = parser.parse(msg)
 	
+	mytype = parse_details.get("type").lower()
+	
 	#get geocordinates
 	geocode = postParse(parse_details)
 	
@@ -106,12 +115,9 @@ def parse():
 	a = mylat + "," + mylong
 	b = str(geocode.get("lat")) + "," + str(geocode.get("long"))
 
-	total_time = olatrip.departure_time(a, b, destination_tsp, slack)
-	total_time = total_time
-
+	total_time = olatrip.departure_time(a, b, destination_tsp, slack, mytype) 
 	effective_time = datetime.utcfromtimestamp(float(total_time))
 
-	mytype = parse_details.get("type").lower()
 
 	details["time"] = effective_time.time().strftime("%H:%M")
 	details["date"] = effective_time.date().strftime("%Y-%m-%d")

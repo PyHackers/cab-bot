@@ -41,7 +41,7 @@ def chat():
 	return 'posted to firebase'
 
 #check
-def departure_time(src, dest, tsp, slack):
+def departure_time(src, dest, tsp, slack, mytype):
 	# src = request.args.get('src')
 	# dest = request.args.get('dest')
 	# atime = request.args.get('atime')
@@ -57,6 +57,11 @@ def departure_time(src, dest, tsp, slack):
 	ttsr = int(tsp)-ttime
 	ttsr = ttsr + 19800 #GMT + 5:30
 	ttsr = ttsr - int(slack) #
+	# 2 hour diff for flights
+	if mytype == "flight":
+		ttsr = ttsr - 7200
+	else:
+		ttsr = ttsr - 600
 	return str(ttsr)
 
 # @app.route('/flights', methods=['POST', 'GET'])
