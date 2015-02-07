@@ -129,14 +129,41 @@ def parse():
 	details["event_time"] = mytime.strftime("%H:%M")
 
 	#RETURN CAB
+	duration = getDuration(parse_details)
+	# cab_2 = effective_time.timedelta(0, duration) #days, seconds
+	print destination_tsp
+	print duration
+	cab_2_tsp = int(destination_tsp) + duration + 19800 #GMT + 5:30
+	cab_2 = datetime.utcfromtimestamp(float(cab_2_tsp))
+	print "cab_2"
+	print cab_2
+	
 	details2 = {}
 
-	# details2["time"] = 
+	details2["time"] = cab_2.time().strftime("%H:%M")
+	details2["date"] = cab_2.date().strftime("%Y-%m-%d")
+	details2["pickup_point"] = parse_details.get('location') if mytype == 'movie' else (parse_details.get('to') + ' Airport')
+	cab_2_geo = olatrip.get_geocode(details2["pickup_point"])
+	details2["lat"] = str(cab_2_geo.get('lat'))
+	details2["long"] = str(cab_2_geo.get('long'))
+	details2["title"] = (parse_details.get("name") if mytype == "movie" else parse_details.get("to") )
+	details2["type"] = mytype
+	details2["event_time"] = cab_2.time().strftime("%H:%M")
 
 	response.append(details)
 	response.append(details2)
 	print response
 	return jsonify(results={"success": True,"msg": response})
+
+def getDuration(details):
+	mytype = details.get('type')
+	duration = 0
+	if mytype == 'movie':
+		duration = olatrip.getMovieDuration(details.get('name'))
+	else:
+		duration = olatrip.getFlightDuration(details.get('fid'), details.get('from'), details.get('to'))
+	duration = duration * 60 #seconds
+	return duration
 
 def postParse(details):
 	mytype = details.get("type")

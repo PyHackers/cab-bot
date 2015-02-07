@@ -80,21 +80,27 @@ def departure_time(src, dest, tsp, slack, mytype):
 
 
 def getMovieDuration(name):
-	movie_details = get_movie_details_from_imdb(movie)
-	
-	return movie_details
+	duration = get_movie_details_from_imdb(name)
+	if duration.isdigit():
+		return int(duration)
+	else:
+		return 120 #Avg time : 2hrs
 
+def get_movie_details_from_imdb(movie):
+	url = 'http://www.omdbapi.com?t=' + movie
+	resp = requests.get(url)
+	data = json.loads(resp.text)
+	if data["Response"] == "True":
+		t = str(data["Runtime"])
+		return t.split(' ')[0] #Eg: 107 min
+
+def getFlightDuration(fid, frm, to):
+	return 120 # @TODO
 
 def get_flights(src, dest, ddate, rdate):
 	#http://api.cleartrip.com/air/1.0/search?from=BOM&to=DEL&depart-date=2015-02-15&return-date=2015-02-20&adults=1&country=IN&currency=INR
 
 	url = 'http://www.google.co.in'
-	return requests.get(url).content
-
-
-
-def get_movie_details_from_imdb(movie):
-	url = 'http://www.omdbapi.com?t=' + movie
 	return requests.get(url).content
 
 def push_movie_to_firebase(movie, json):
