@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from server import parser
 import math, json, os
 import firebase as firebase
 import unicodedata
@@ -58,8 +59,24 @@ def bookcab():
 
 	return jsonify(results={"success":True,"msg":msg})
 
+@app.route('/parse')
+def parse():
+	msg = request.args.get('msg')
+	# mytype = request.args.get('type')
+
+	if not msg:
+		return jsonify(results={"success": False,"msg": "please send msg"})
+	# if not mytype:
+		# return jsonify(results={"success": False,"msg": "please send type: movie or flight"})
+	#msg = "Hi Customer, Booking ID: AGSN0004863077. Seats: DIAMOND-B10,B11,B12,B13 for Interstellar on Sat, 22 Nov, 2014 10:30pm at AGS Cinemas OMR: Navlur (SCREEN 4). Please carry your CC/DC card which was used for booking tickets"
+	# details = parser.parse(msg, mytype)
+	details = parser.parse(msg)
+	# @TODO : Call other apis
+	jsonObject = json.loads(details)
+	print "jsonObject", jsonObject
+	return jsonify(results={"success": True,"msg": details})
+
 if __name__ == '__main__':
 	port = int(os.environ.get("PORT", 5000))
 	app.debug = True
 	app.run(host='0.0.0.0', port = port)
-

@@ -14,7 +14,7 @@ def getFlightId(msg):
 		fid = m.group(2)
 		response["fid"] = fid
 	return response
-	
+
 def getLocation(msg):
 	response = {}
 	m = re.search(LOCATION_PATTERN, msg, re.IGNORECASE)
@@ -108,15 +108,36 @@ def test(msg):
 	# a =  dparser.parse("on Fri, 09 Jan from MAA to AMD at 2015",fuzzy=True)
 	# print a.year
 
+def parse(msg):
+	print "inside parse"
+	print msg
+	details = {}
+	# if i == "movie":
+	# 	details = parseMovies(msg)
+	# elif i == "flight":
+	# 	details = parseFlight(msg)
+	# else:
+	# 	print "parse type not defined"
+	checkmsg = msg.lower()
+	if "movie" in checkmsg or "seats" in checkmsg:
+		details = parseMovies(msg)
+	elif "flight" in checkmsg or "flt" in checkmsg:
+		details = parseFlight(msg)
+	else:
+		print "parse type not defined"
+	print details
+	print "------"
+	return details
+
+
 if __name__ == '__main__':
 	msg1 = "Dear Guest, Your PNR: 00WJSS for Flight: LB632 MAA-AMD Date: 09/01/2015 Dep.Time: 05:20hrs. Contact 1800-4250-0666 for assistance. Happy Flying! air costa"
 	msg2 = "The PNR for your Spicejet Flt SG281 for Ahmedabad-Chennai on 28 Oct 14 at 05:50 hrs is LEHW8B. Thank you."
 	msg3 = "Dear Guest, Your PNR is 00WJSS for flight LB632 on Fri, 09 Jan from MAA to AMD at 0520 and 00WJSS for flight SG281 on Tue, 20 Jan from AMD to MAA at 0555"
 	movie = "Hi Customer, Booking ID: AGSN0004863077. Seats: DIAMOND-B10,B11,B12,B13 for Interstellar on Sat, 22 Nov, 2014 10:30pm at AGS Cinemas OMR: Navlur (SCREEN 4). Please carry your CC/DC card which was used for booking tickets"
 	movie2 = "Booking ID: WWT782B | Movie: HERCULES (U/A) | Show Details: 9-Aug | 06:45 PM | Screen: SCREEN-9 | Class: ELITE | Seats: C13, C14 | Multiplex: LUXE | Location: PHOENIX MARKET CITY, VELACHERY, CHENNAI | No ticket required. Please show this SMS to a cinema attendant for entry into the screen. Thank you"
-	print parseFlight(msg1)
+
+	# parse(msg1)
 	# parse(msg2)
-	## parse(msg3)
-	print parseMovies(movie)
-	print parseMovies(movie2)
-	# test(msg2)
+	# parse(movie)
+	# parse(movie2)
