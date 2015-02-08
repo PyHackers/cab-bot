@@ -162,10 +162,12 @@ def parse():
 	details2["second_title"] = "book a return cab ?" if mytype == "movie" else ("book a cab from " + parse_details.get('to') + " Airport?" )
 	details2["event_time"] = cab_2.time().strftime("%H:%M")
 
+	app_second = details["second_title"]
+	
 	response.append(details)
 	response.append(details2)
 	print response
-	return jsonify(results={"success": True,"msg": response})
+	return jsonify(results={"success": True, "msg": response, "second_title": str(app_second)})
 
 def getDuration(details):
 	mytype = details.get('type')
