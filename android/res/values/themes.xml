@@ -1,0 +1,19 @@
+<resources>
+
+    <style name="Zohodocs.AppTheme" parent="@style/Theme.AppCompat.Light">
+
+        <!-- Set AppCompat’s color theming attrs -->
+        <!-- <item name="actionBarStyle">@style/MyActionBarStyle</item> -->
+
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_color_dark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/primary_color_dark</item>
+        <!-- The rest of your attributes -->
+    </style>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="windowBackground">#FFFFFF</color>
+    <!-- Changes for material Design - start -->
+    <color name="primary_color">#526a76</color>
+    <color name="primary_color_dark">#455A64</color>
+    <color name="primary_color_light">#f1f4f5</color> <!-- <color name="colorAccent">#9E9E9E</color> -->
+    <color name="text_color_primary">#687074</color>
+    <color name="text_color_secondary">#868D90</color>
+    <color name="colorAccent">#20C4C8</color> <!-- <color F5F7F7 -->
+    <color name="menu_selector_color">#F0F5F5</color>
+    <color name="tag_add_color">#F46962</color>
+
+</resources>

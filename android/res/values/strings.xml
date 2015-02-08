@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Cabbot</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="request_timeout">Request timedout</string>
+    <string name="network_error">Network error</string>
+    
+    <string name="account">Account</string>
+    <string name="address">Addresses</string>
+    <string name="slack_time">Slack time</string>
+    <string name="logout">Logout</string>
+    
+    <string name="submit">Submit</string>
+    <string name="hnt_et_location">Location</string>
+    <string name="new_address">New Address</string>
+    <string name="find">Find</string>
+
+</resources>

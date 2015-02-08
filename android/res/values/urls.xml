@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="base_url">http://ola-chennainerd.rhcloud.com/</string>
+    <string name="login_url">login?username=%1$s&amp;password=%2$s</string>
+    <string name="parse">parse?lat=%1$s&amp;long=%2$s&amp;slack=%3$s&amp;msg=%4$s</string>
+</resources>
