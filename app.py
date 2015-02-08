@@ -111,7 +111,9 @@ def parse():
 	mydatetime = datetime.combine(mydate, mytime)
 
 	destination_tsp = mydatetime.strftime('%s')
-	new_destination_tsp = int(destination_tsp) + 19800 - 34200#GMT + 5:30
+	new_destination_tsp = int(destination_tsp) + 34200#GMT + 5:30
+	# new_destination_tsp = int(destination_tsp) - 34200#GMT + 5:30
+	# new_destination_tsp = destination_tsp
 	# print "mydatetime"
 	# print mydatetime
 	# print new_destination_tsp
@@ -163,7 +165,7 @@ def parse():
 	details2["event_time"] = cab_2.time().strftime("%H:%M")
 
 	app_second = details["second_title"]
-	
+
 	response.append(details)
 	response.append(details2)
 	print response
