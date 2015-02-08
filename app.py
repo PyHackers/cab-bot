@@ -159,6 +159,7 @@ def parse():
 	details2["long"] = str(cab_2_geo.get('long'))
 	details2["title"] = ("Book a cab for " + parse_details.get("name") + " movie") if mytype == "movie" else ("Book a cab for " + parse_details.get("from") + " Airport" )
 	details2["type"] = mytype
+	details2["second_title"] = "book a return cab ?" if mytype == "movie" else ("book a cab from " + parse_details.get('to') + " Airport?" )
 	details2["event_time"] = cab_2.time().strftime("%H:%M")
 
 	response.append(details)
