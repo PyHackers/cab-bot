@@ -133,7 +133,8 @@ def parse():
 	details["second_title"] = "book a return cab ?" if mytype == "movie" else ("book a cab from " + parse_details.get('to') + " Airport?" )
 	details["lat"] = str(mylat)
 	details["long"] = str(mylong)
-	details["title"] = ("Ah! Want to Book a cab for " + parse_details.get("name") + " movie?") if mytype == "Movie" else ("Ah! Want to Book a cab for " + parse_details.get("from") + " Airport?" )
+	details["title"] = ("Ah! Want to Book a cab for " + str(parse_details.get("name")) + " movie?") if mytype == "movie" else ("Ah! Want to Book a cab for " + str(parse_details.get("from")) + " Airport?" )
+	# details
 	details["type"] = mytype
 	details["event_time"] = mytime.strftime("%H:%M")
 
