@@ -130,9 +130,10 @@ def parse():
 	details["date"] = effective_time.date().strftime("%Y-%m-%d")
 	details["booked_time"] = effective_time.strftime('%s')
 	details["pickup_point"] = str(olatrip.get_reverse_geocode(mylat, mylong))
+	details["second_title"] = "book a return cab ?" if mytype == "movie" else ("book a cab from " + parse_details.get('to') + " Airport?" )
 	details["lat"] = str(mylat)
 	details["long"] = str(mylong)
-	details["title"] = (parse_details.get("name") if mytype == "movie" else parse_details.get("from") )
+	details["title"] = ("Ah! Want to Book a cab for " + parse_details.get("name") + " movie?") if mytype == "Movie" else ("Ah! Want to Book a cab for " + parse_details.get("from") + " Airport?" )
 	details["type"] = mytype
 	details["event_time"] = mytime.strftime("%H:%M")
 
@@ -155,7 +156,7 @@ def parse():
 	cab_2_geo = olatrip.get_geocode(details2["pickup_point"])
 	details2["lat"] = str(cab_2_geo.get('lat'))
 	details2["long"] = str(cab_2_geo.get('long'))
-	details2["title"] = (parse_details.get("name") if mytype == "movie" else parse_details.get("to") )
+	details2["title"] = ("Book a cab for " + parse_details.get("name") + " movie") if mytype == "movie" else ("Book a cab for " + parse_details.get("from") + " Airport" )
 	details2["type"] = mytype
 	details2["event_time"] = cab_2.time().strftime("%H:%M")
 
