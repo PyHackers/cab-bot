@@ -111,7 +111,7 @@ def parse():
 	mydatetime = datetime.combine(mydate, mytime)
 
 	destination_tsp = mydatetime.strftime('%s')
-	new_destination_tsp = int(destination_tsp) + 19800 #GMT + 5:30
+	new_destination_tsp = int(destination_tsp) + 19800 - 34200#GMT + 5:30
 	# print "mydatetime"
 	# print mydatetime
 	# print new_destination_tsp
@@ -121,13 +121,14 @@ def parse():
 	b = str(geocode.get("lat")) + "," + str(geocode.get("long"))
 
 	total_time = olatrip.departure_time(a, b, destination_tsp, slack, mytype) 
-	total_time = int(total_time) + 19800 #GMT + 5:30
+	total_time = int(total_time) + 19800 - 34200#GMT + 5:30
 	effective_time = datetime.utcfromtimestamp(float(total_time))
 	print "effective_time"
 	print effective_time
 
 	details["time"] = effective_time.time().strftime("%H:%M")
 	details["date"] = effective_time.date().strftime("%Y-%m-%d")
+	details["booked_time"] = effective_time.strftime('%s')
 	details["pickup_point"] = str(olatrip.get_reverse_geocode(mylat, mylong))
 	details["lat"] = str(mylat)
 	details["long"] = str(mylong)
@@ -140,7 +141,7 @@ def parse():
 	# cab_2 = effective_time.timedelta(0, duration) #days, seconds
 	print destination_tsp
 	print duration
-	cab_2_tsp = int(destination_tsp) + duration + 19800 #GMT + 5:30
+	cab_2_tsp = int(destination_tsp) + duration + 19800 - 34200#GMT + 5:30
 	cab_2 = datetime.utcfromtimestamp(float(cab_2_tsp))
 	print "cab_2"
 	print cab_2
@@ -149,6 +150,7 @@ def parse():
 
 	details2["time"] = cab_2.time().strftime("%H:%M")
 	details2["date"] = cab_2.date().strftime("%Y-%m-%d")
+	details2["booked_time"] = cab_2.strftime('%s')
 	details2["pickup_point"] = parse_details.get('location') if mytype == 'movie' else (parse_details.get('to') + ' Airport')
 	cab_2_geo = olatrip.get_geocode(details2["pickup_point"])
 	details2["lat"] = str(cab_2_geo.get('lat'))
