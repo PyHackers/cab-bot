@@ -42,6 +42,7 @@ def chat():
 
 #check
 def departure_time(src, dest, tsp, slack, mytype):
+	# tsp = str(int(tsp) + 19800) #GMT + 5:30
 	# src = request.args.get('src')
 	# dest = request.args.get('dest')
 	# atime = request.args.get('atime')
@@ -54,8 +55,10 @@ def departure_time(src, dest, tsp, slack, mytype):
 	dmatrix = json.loads(get_distance_matrix(src, dest, tsp))
 	print dmatrix
 	ttime = dmatrix['rows'][0]['elements'][0]['duration']['value']
+	
+	
 	ttsr = int(tsp)-ttime
-	ttsr = ttsr + 19800 #GMT + 5:30
+	# ttsr = ttsr + 19800 #GMT + 5:30
 	ttsr = ttsr - int(slack) #
 	# 2 hour diff for flights
 	if mytype == "flight":
@@ -130,6 +133,7 @@ def get_distance_matrix(src, dest, atime):
 	key = 'AIzaSyDTZT2yqi-hwVu9VBDnx1M2KnKd7orTiXA'
 	#curl -X PUT -d '{ "alanisawesome": { "name": "Alan Turing", "birthday": "June 23, 1912" } }' https://docs-examples.firebaseio.com/rest/quickstart/users.json
 	url = 'https://maps.googleapis.com/maps/api/distancematrix/json?key='+key+'&origins='+src+'&destinations='+dest+'&arrival_time='+atime
+	print "matrxurl"
 	print url
 	response = urllib2.urlopen(url)
 	print response

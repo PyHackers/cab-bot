@@ -111,13 +111,20 @@ def parse():
 	mydatetime = datetime.combine(mydate, mytime)
 
 	destination_tsp = mydatetime.strftime('%s')
-	print destination_tsp
-	a = mylat + "," + mylong
+	new_destination_tsp = int(destination_tsp) + 19800 #GMT + 5:30
+	# print "mydatetime"
+	# print mydatetime
+	# print new_destination_tsp
+	# print datetime.utcfromtimestamp(float(new_destination_tsp))
+
+	a = mylat + "," + mylong #Chesterfields
 	b = str(geocode.get("lat")) + "," + str(geocode.get("long"))
 
 	total_time = olatrip.departure_time(a, b, destination_tsp, slack, mytype) 
+	total_time = int(total_time) + 19800 #GMT + 5:30
 	effective_time = datetime.utcfromtimestamp(float(total_time))
-
+	print "effective_time"
+	print effective_time
 
 	details["time"] = effective_time.time().strftime("%H:%M")
 	details["date"] = effective_time.date().strftime("%Y-%m-%d")
@@ -170,7 +177,7 @@ def postParse(details):
 	#get address
 	address = ""
 	if mytype == 'flight':
-		address = details.get("to") + "+Airport" #Append with + to avoid bad request
+		address = details.get("from") + "+Airport" #Append with + to avoid bad request
 	elif mytype == 'movie':
 		address = details.get("location")
 	#get cordinates
